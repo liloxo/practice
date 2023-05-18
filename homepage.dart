@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:practice/addnote.dart';
-import 'package:practice/main.dart';
+import 'package:practice/editnote.dart';
 import 'package:practice/noteclass.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -24,17 +24,6 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {}); 
   }
 
-  Future<void> saveNotesToSharedPrefs() async {
-    List<String> notesData = note.notes.map((note) => "${note.title},${note.content}").toList();
-    await sharedPreferences.setStringList('note', notesData);
-  }
-  
-  deletenote(String ttl) async {
-    note.notes.removeWhere((note) => note.title == ttl);
-    saveNotesToSharedPrefs();
-    setState(() {});
-  }
-
   @override
   void initState() {
     refreshNotes();
@@ -45,6 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         toolbarHeight: 70,
         backgroundColor: Colors.blueGrey,
         title: const Text('KeepNotes',style: TextStyle(color: Colors.white,fontSize: 20))
@@ -55,34 +45,45 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () {
          Navigator.of(context).push(MaterialPageRoute(builder: (context)=> const AddNote()));
       }),
-      body: ListView.builder(
-        itemCount: note.notes.length,
-        itemBuilder: (context,i){
-          return Container(
-            height: 80,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: InkWell(
-              onTap: () {
-                
-              },
-              onLongPress: () {
-                longpressconvert();
-              },
-              child: Card(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(note.notes[i].title),
-                    ),
-                  if (longpress) IconButton(onPressed: (){deletenote(note.notes[i].title);}, icon: const Icon(Icons.delete)) 
-                  ]
-                )
-              ),
-            )
-          );
-        }
+      body: Padding(
+        padding: const EdgeInsets.only(top: 20),
+        child: ListView.builder(
+          itemCount: note.notes.length,
+          itemBuilder: (context,i){
+            int reversedIndex = note.notes.length - i-1;
+            return Container(
+              height: 80,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: ((context) => EditNote(
+                   title: note.notes[i].title,
+                   content: note.notes[i].content,
+                   i: reversedIndex,
+                  ))));
+                },
+                onLongPress: () {
+                  longpressconvert();
+                },
+                child: Card(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(note.notes[i].title,style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500)),
+                      ),
+                    if (longpress) IconButton(onPressed: (){
+                      note.deletenote(note.notes[i].title);
+                      setState(() {});
+                      }, icon: const Icon(Icons.delete_outline,color: Colors.red,)) 
+                    ]
+                  )
+                ),
+              )
+            );
+          }
+        ),
       )
     );
   }
