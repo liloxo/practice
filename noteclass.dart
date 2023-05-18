@@ -28,16 +28,6 @@ class TaskData {
     }
   }
 
-  void updateNoteByTitle(String title, String newTitle, String? newContent) {
-  for (int i = 0; i < notes.length; i++) {
-    if (notes[i].title == title) {
-      notes[i].title = newTitle;
-      notes[i].content = newContent;
-      break;
-    }
-  }
-}
-
   deletenote(String ttl) async {
     notes.removeWhere((note) => note.title == ttl);
     saveNotesToSharedPrefs();
