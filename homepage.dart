@@ -37,7 +37,11 @@ class _MyHomePageState extends State<MyHomePage> {
         elevation: 0,
         toolbarHeight: 70,
         backgroundColor: Colors.blueGrey,
-        title: const Text('KeepNotes',style: TextStyle(color: Colors.white,fontSize: 20))
+        centerTitle: true,
+        title: const Text('KeepNotes',style: TextStyle(color: Colors.white,fontSize: 20)),
+        leading: longpress 
+        ? IconButton(onPressed: (){longpressconvert();}, icon: const Icon(Icons.arrow_back))
+        : null
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blueGrey,
