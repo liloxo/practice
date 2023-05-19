@@ -30,8 +30,8 @@ class TaskData {
     }
   }
 
-  deletenote(String ttl,String cnt) async {
-    notes.removeWhere((note) => note.title == ttl && note.content == cnt);
+  deletenote(String ttl,String cnt,String dt) async {
+    notes.removeWhere((note) => note.title == ttl && note.content == cnt && note.dateTime == dt);
     saveNotesToSharedPrefs();
   }
 
