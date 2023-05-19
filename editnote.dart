@@ -9,8 +9,7 @@ class EditNote extends StatefulWidget {
   final String title;
   final String? content;
   final int i;
-  final String time;
-  const EditNote({super.key, required this.title, this.content, required this.i, required this.time});
+  const EditNote({super.key, required this.title, this.content, required this.i});
 
   @override
   State<EditNote> createState() => _EditNoteState();
@@ -23,7 +22,6 @@ class _EditNoteState extends State<EditNote> {
   TextEditingController contentedit = TextEditingController();
   TaskData note = TaskData();
   late int i;
-  late String notetime;
   String newdateTime = DateFormat('d MMMM').format(DateTime.now());
 
   void editNote(context) async {
@@ -42,7 +40,6 @@ class _EditNoteState extends State<EditNote> {
     titleedit.text = widget.title;
     contentedit.text = widget.content!;
     i = widget.i;
-    notetime = widget.time;
     super.initState();
   }
 
@@ -70,15 +67,6 @@ class _EditNoteState extends State<EditNote> {
                 }, icon: const Icon(Icons.check,size: 30,)),
               )
             ]
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 15),
-                child: Text(notetime,style: const TextStyle(color: AppColors.grey,fontSize: 17)),
-              )
-            ],
           ),
           const SizedBox(height: 15),
           CustomAddNoteFormField(
