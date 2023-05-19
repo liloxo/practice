@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:practice/mycolors.dart';
 import 'package:practice/noteclass.dart';
+import 'package:practice/textfield.dart';
 import 'main.dart';
 
 class AddNote extends StatefulWidget {
@@ -14,11 +17,13 @@ class _AddNoteState extends State<AddNote> {
   TextEditingController content = TextEditingController();
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TaskData note = TaskData();
+  String dateTime = DateFormat('d MMMM').format(DateTime.now());
 
   insertnote(context) async {
     if(formkey.currentState!.validate()){
+      //String timestamp = dateTime.toString();
       List<String> existingNotes = sharedPreferences.getStringList('note') ?? [];
-      existingNotes.add("${title.text},${content.text}");
+      existingNotes.add("${title.text},${content.text},$dateTime.");
       await sharedPreferences.setStringList('note', existingNotes);
      title.clear();
      content.clear();
@@ -28,66 +33,58 @@ class _AddNoteState extends State<AddNote> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blueGrey,
-        title: const Text('Add Note',style: TextStyle(color: Colors.white,fontSize: 20))
-      ),
-      body: Column(
-          children: [
-            const SizedBox(height: 80),
-            Form(
-              key: formkey,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                child: TextFormField(
-                  controller: title,
-                  validator: (value) {
-                    if(value!.isEmpty ){
-                      return "Title can't be empty";
-                    }
-                    return null;
-                  },
-                  decoration: const InputDecoration(
-                    hintText: 'Title',
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blueGrey),
-                      borderRadius: BorderRadius.all(Radius.circular(15))
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blueGrey),
-                      borderRadius: BorderRadius.all(Radius.circular(15))
-                    ),
-                  ),
-                ),
+      body: Form(
+        key: formkey,
+        child: ListView(
+        children: [
+          const SizedBox(height: 15),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(children: [
+                Padding(
+                padding: const EdgeInsets.only(left: 5),
+                child: IconButton(iconSize: 30, onPressed: (){Navigator.of(context).pop();}, icon: const Icon(Icons.arrow_back),color: AppColors.primaryColor),
               ),
-            ),
-             Padding(
-                padding:  const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                child: TextField(
-                  controller: content,
-                  decoration: const InputDecoration(
-                    hintText: 'Note',
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blueGrey),
-                      borderRadius: BorderRadius.all(Radius.circular(15))
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blueGrey),
-                      borderRadius: BorderRadius.all(Radius.circular(15))
-                    ),
-                  ),
-                ),
+              const Padding(
+                padding:  EdgeInsets.only(left: 10),
+                child: Text(" Add Note ", style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold,color: AppColors.primaryColor)),
               ),
-            MaterialButton(
-              color: Colors.blueGrey,
-              onPressed: (){
-                insertnote(context);
-              },
-              child: const Text('Add Note',style: TextStyle(color: Colors.white,fontSize: 14))
+              ]),
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: IconButton(onPressed: (){insertnote(context);}, icon: const Icon(Icons.save_alt_rounded,size: 30,)),
+              )
+            ],
+          ),
+          const SizedBox(height: 15),
+          CustomAddNoteFormField(
+            mycontroller: title,
+            autofocus: false,
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              hintText: 'Title',      
+              hintStyle: TextStyle(fontSize: 25) 
             ),
-            const SizedBox(height: 50),
-          ],
-        ),
+            valid: (value){
+              if( value == null || value.isEmpty ) {
+                return "Title Can't Be Empty";
+              }return null ;
+            }, titleornote: true,
+            ),
+          CustomAddNoteFormField(
+            maxLines: null,
+              mycontroller: content,
+              autofocus: false,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Note'
+              ), titleornote: false,
+          )
+        ]
+      )
+        )
     );
+    
   }
 }
