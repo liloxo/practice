@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:practice/mycolors.dart';
 import 'package:practice/noteclass.dart';
+import 'package:practice/textfield.dart';
 import 'main.dart';
 
 class EditNote extends StatefulWidget {
@@ -19,12 +22,13 @@ class _EditNoteState extends State<EditNote> {
   TextEditingController contentedit = TextEditingController();
   TaskData note = TaskData();
   late int i;
+  String newdateTime = DateFormat('d MMMM').format(DateTime.now());
 
   void editNote(context) async {
     if (formkey.currentState!.validate()) {
       List<String>? existingNotes = sharedPreferences.getStringList('note') ;
       if (existingNotes != null && i >= 0 && i < existingNotes.length) {
-      existingNotes[i] = "${titleedit.text},${contentedit.text}";
+      existingNotes[i] = "${titleedit.text},${contentedit.text},$newdateTime";
       await sharedPreferences.setStringList('note', existingNotes);
     }
       Navigator.of(context).pushNamedAndRemoveUntil('homepage', (route) => false);
@@ -42,67 +46,54 @@ class _EditNoteState extends State<EditNote> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 70,
-        backgroundColor: Colors.blueGrey,
-        title: const Text('Edit Note',style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500)),
-      ),
-      body: Column(
+      body: Form(
+        key: formkey,
+        child: ListView(
         children: [
-          const SizedBox(height: 80),
-            Form(
-              key: formkey,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                child: TextFormField(
-                  controller: titleedit,
-                  validator: (value) {
-                    if(value!.isEmpty ){
-                      return "Title can't be empty";
-                    }
-                    return null;
-                  },
-                  decoration: const InputDecoration(
-                    hintText: 'Title',
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blueGrey),
-                      borderRadius: BorderRadius.all(Radius.circular(15))
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blueGrey),
-                      borderRadius: BorderRadius.all(Radius.circular(15))
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-                padding:  const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                child: TextField(
-                  controller: contentedit,
-                  decoration: const InputDecoration(
-                    hintText: 'Note',
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blueGrey),
-                      borderRadius: BorderRadius.all(Radius.circular(15))
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blueGrey),
-                      borderRadius: BorderRadius.all(Radius.circular(15))
-                    ),
-                  ),
-                ),
-              ),
-            const SizedBox(height: 25),
-            MaterialButton(
-                color: Colors.blueGrey,
-                onPressed: (){
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(children: [
+                Padding(
+                padding: const EdgeInsets.only(left: 5),
+                child: IconButton(iconSize: 30, onPressed: (){Navigator.of(context).pop();}, icon: const Icon(Icons.arrow_back),color: AppColors.primaryColor),
+              )
+              ]),
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: IconButton(onPressed: (){
                   editNote(context);
-                },
-                child: const Text('Edit',style: TextStyle(fontSize: 17.5,color: Colors.white))
-            )
+                }, icon: const Icon(Icons.check,size: 30,)),
+              )
+            ]
+          ),
+          const SizedBox(height: 15),
+          CustomAddNoteFormField(
+            mycontroller: titleedit,
+            autofocus: false,
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              hintText: 'Title',      
+              hintStyle: TextStyle(fontSize: 25) 
+            ),
+            valid: (value){
+              if( value == null || value.isEmpty ) {
+                return "Title Can't Be Empty";
+              }return null ;
+            }, titleornote: true,
+            ),
+          CustomAddNoteFormField(
+              mycontroller: contentedit,
+              autofocus: false,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Note'
+              ), titleornote: false,
+          )
         ]
       )
+        )
     );
   }
 }
