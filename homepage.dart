@@ -94,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
                              title: note.notes[i].title,
                              content: note.notes[i].content,
                              i: reversedIndex,
+                             time: note.notes[i].dateTime,
                             ))));
                            },icon: Icons.edit,)
                           ]
@@ -107,6 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                title: note.notes[i].title,
                                content: note.notes[i].content,
                                i: reversedIndex,
+                               time: note.notes[i].dateTime,
                               ))));
                             },
                             child: Card(
