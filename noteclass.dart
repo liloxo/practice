@@ -36,7 +36,7 @@ class TaskData {
   }
 
   Future<void> saveNotesToSharedPrefs() async {
-    List<String> notesData = notes.map((note) => "${note.title},${note.content}").toList();
+    List<String> notesData = notes.map((note) => "${note.title},${note.content},${note.dateTime}").toList();
     await sharedPreferences.setStringList('note', notesData);
   }
 }
